@@ -29,11 +29,9 @@ Demo app - Output to Serial port upon successful read:
 
     Tank 0: 147 121 0 0 0 0 14 108 149 179 184 255 Checksum: 121 OK
 
-#### Interfacing 12V sensor with 3.3V ESP32:
+### Interfacing 12V sensor with 3.3V ESP32:
 
-To interface, I built a level-shifter using this document as a guide:
-
-  https://www.analog.com/en/design-notes/how-to-level-shift-1wire-systems.html
+A description of the level shifter necessary to interface the 3.3V ESP32 with the 12V SeeLevel sensor is [here](./docs/LevelShifter.md). 
 
 The 'Basic Level Shifter' was built with the right-hand side powered by a 12V power supply, an ESP32 as the 3.3V side, and a 2N7000 N-type MOSFET. Resisters were chosen by guessing. I ended up with a 51kohm pullup resister on the 3.3V side and a 560ohm resister on the 12V side, which limits current to approx 25mA. I am not an EE.
 
