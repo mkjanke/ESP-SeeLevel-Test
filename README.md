@@ -12,7 +12,7 @@ To trigger the tank sender/sensor, one needs to power the sender with 12V then p
 
 Each Garnet SeeLevel tank sender is configured as sensor 1, 2, or 3 by snipping a tab on the sender. A sender will respond when it sees a sequence of pulses to ground equal to its sensor number. Each pulse needs to be approx 85µs wide. Pulse spacing needs to be approximately 300µs.
 
-The sender will respond by pulling the 12V line to ground in a series of pulses. Pulses will either be approximately 13µs wide or 48µs wide. In this application I'm treating the short pulses as '0', long pulses as '1'.
+The sender will respond by pulling the 12V line to ground in a series of pulses. Pulses will either be approximately 13µs wide or 48µs wide. In this application I'm treating the short pulses as '0', long pulses as '1'. (JIm G. did the opposite)
 
 Bytes returned from sender:
 
@@ -25,7 +25,7 @@ For the segment fill values, a 'full' value will likely be less than 255, appare
 
 Testing can be done by temporarily attaching sensor to water jug or by simply touching sensor segments.
 
-Demo app - Output to Serial port:
+Demo app - Output to Serial port upon successful read:
 
     Tank 0: 147 121 0 0 0 0 14 108 149 179 184 255 Checksum: 121 OK
 
