@@ -35,7 +35,7 @@ To interface, I built a level-shifter using this document as a guide:
 
   https://www.analog.com/en/design-notes/how-to-level-shift-1wire-systems.html
 
-The 'Basic Level Shifter' was built with the right-hand side powered by a 12V power supply, with an ESP32 as the 3.3V side. Resisters were chosen by guessing. I ended up with a 51kohm pullup resister on the 3.3V side and a 560ohm resister on the 12V side, which limits current to approx 25mA. 
+The 'Basic Level Shifter' was built with the right-hand side powered by a 12V power supply, an ESP32 as the 3.3V side, and a 2N7000 N-type MOSFET. Resisters were chosen by guessing. I ended up with a 51kohm pullup resister on the 3.3V side and a 560ohm resister on the 12V side, which limits current to approx 25mA. I am not an EE.
 
 A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
