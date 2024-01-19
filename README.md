@@ -31,26 +31,22 @@ Demo app - Output to Serial port upon successful read:
 
 ### Interfacing 12V sensor with 3.3V ESP32:
 
-A description of the level shifter necessary to interface the 3.3V ESP32 with the 12V SeeLevel sensor is [here](./docs/LevelShifter.md). 
+A description of the circuit necessary to interface the 3.3V ESP32 with the 12V SeeLevel sensor is [here](./docs/LevelShifter.md). 
 
-The 'Basic Level Shifter' was built with the right-hand side powered by a 12V power supply, an ESP32 as the 3.3V side, and a 2N7000 N-type MOSFET. Resisters were chosen by guessing. I ended up with a 51kohm pullup resister on the 3.3V side and a 560ohm resister on the 12V side, which limits current to approx 25mA. I am not an EE.
+The interface, designed by Jim G. of the Raspberry Pi forum, uses a high-side P-channel MOSFET controlled by an ESP32 3.3V pin. Data is read on a second pin via a voltage divider.
 
 A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
 ### Notes:
 
- * This app doesn't attempt to accommodate a trimmed sender or any sender other than the 710AR Rev E.
+ * This app doesn't yet attempt to accommodate a trimmed sender or any sender other than the 710AR Rev E.
 
  * No attempt is made to process the returned data into an actual liquid level. I'm intending that to be done in some other app (perhaps Node-Red).
 
  * I'm not confident in the validity of the checksum calculation.
 
  * Uses Arduino framework but is only tested on an ESP32.
-  
- * When the ESP32 pin is pulled low, the ESP32 sinks current from both sides of the circuit, so care must be taken to prevent the ESP32 from going to smoke.
-
- * My logic analyzer shows much shorter pulse width on 12V side than on 3.3V side. Uncertain as to why. Not an EE. The sender/sensor does respond to the short (1.5µs) pulse however. 
 
 ### TBD
 
-This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit; that the checksum math is correct; that the circuit and app work with multiple sensors & trimmed sensors; that the timing is not affected by wire length and type; and much,, much more.
+This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit; that the checksum math is correct; that the circuit and app work with multiple sensors & trimmed sensors; that the timing is not affected by wire length and type; and much, much more.
