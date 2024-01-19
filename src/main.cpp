@@ -73,13 +73,13 @@ const int SeeLevelWritePIN = 13;
 const int SeeLevelReadPIN = 16;
 
 // Time 12V bus is powered before sending pulse(s) to sensor(s)
-#define SEELEVEL_POWERON_DELAY 2450
+#define SEELEVEL_POWERON_DELAY_MICROSECONDS 2450
 // Width of pulse sent to sensors
 #define SEELEVEL_PULSE_LOW_MICROSECONDS 85
 // Time between pulses snt to sensors
 #define SEELEVEL_PULSE_HIGH_MICROSECONDS 290
 // How long to wait for response before timing out
-#define SEELEVEL_PULSE_TIMEOUT 10000
+#define SEELEVEL_PULSE_TIMEOUT_MICROSECONDS 5000
 
 // Byte array to store data for 3 tanks x 12 bytes data per tank:
 byte SeeLevelData[3][12];
@@ -97,35 +97,46 @@ void setup() {
 }
 
 void loop() {
-  for (int t = 0; t < 3; t++) {
+  for (auto t = 0; t < 3; t++) {
     Serial.print("Tank " + (String)t + ": ");
     readLevel(t);
 
-    for (int i = 0; i < 12; i++) {
+    for (auto i = 0; i < 12; i++) {
       Serial.print(SeeLevelData[t][i]);
       Serial.print(' ');
     }
 
     // Verify checksum
     int byteSum = 0;
-    for (int i = 2; i <= 10; i++) {  // Sum data bytes
+    for (auto i = 2; i <= 10; i++) {  // Sum data bytes
       byteSum = byteSum + SeeLevelData[t][i];
     }
-    // Calculate and compare checksum
-    int checkSum = SeeLevelData[t][1];
-    // Checksum appears to be (sum of bytes % 256) - 1, with special case for checksum 255.
-    if (((byteSum % 256) - 1 == checkSum) || (byteSum % 256 == 0 && checkSum == 255)) {
-      Serial.print("Checksum: ");
-      Serial.print((byteSum % 256) - 1);
-      Serial.println(" OK");
+    if (byteSum != 0) {
+      // Calculate and compare checksum
+      int checkSum = SeeLevelData[t][1];
+      // Checksum appears to be (sum of bytes % 256) - 1, with special case for checksum 255.
+      if (((byteSum % 256) - 1 == checkSum) || (byteSum % 256 == 0 && checkSum == 255)) {
+        Serial.print("Checksum: ");
+        Serial.print((byteSum % 256) - 1);
+        Serial.println(" OK");
+      } else {
+        Serial.print(" byteSum % 256 - 1 = ");
+        Serial.print(" Checksum: ");
+        Serial.print((byteSum % 256) - 1);
+        Serial.println(" Not OK");
+      }
     } else {
-      Serial.print(" byteSum % 256 - 1 = ");
-      Serial.print(" Checksum: ");
-      Serial.print((byteSum % 256) - 1);
-      Serial.println(" Not OK");
+      Serial.println(" byteSum == 0, No data ");
     }
     // Bus must be pulled low for some time before attempting to read another sensor
     delay(1000);
+
+    // Clear the sensor data array
+    for (auto t = 0; t < 3; t++) {
+      for (auto i = 0; i < 12; i++) {
+        SeeLevelData[t][i] = 0;
+      }
+    }
   }
   delay(5000);  // wait between reads
 }
@@ -140,10 +151,9 @@ void loop() {
 // Passed variable (t) is 0, 1 or 2
 //
 void readLevel(int t) {
-  
   // Power the sensor line for 2.4 ms so tank levels can be read
   digitalWrite(SeeLevelWritePIN, HIGH);
-  delayMicroseconds(SEELEVEL_POWERON_DELAY);
+  delayMicroseconds(SEELEVEL_POWERON_DELAY_MICROSECONDS);
 
   // 1, 2 or 3 low pulses to select Fresh, Grey, Black tank
   for (int i = 0; i <= t; i++) {
@@ -153,11 +163,19 @@ void readLevel(int t) {
     delayMicroseconds(SEELEVEL_PULSE_HIGH_MICROSECONDS);
   }
 
+  // Sensor should respond in approx 7ms. Do nothing for 5ms.
+  delay(5);
+
   // Read 12 bytes from sensor, store in array
-  for (int byteLoop = 0; byteLoop < 12; byteLoop++) {
+  // Disable interrupts during sensor read.
+  // Should take approx 13.5ms. for normal sensor read.
+  // Note that this may not be reliable in all cases.
+  portDISABLE_INTERRUPTS();
+  for (auto byteLoop = 0; byteLoop < 12; byteLoop++) {
     SeeLevelData[t][byteLoop] = readByte();
   }
-  delay(10);
+  portENABLE_INTERRUPTS();
+  delay(1);
   digitalWrite(SeeLevelWritePIN, LOW);  // Turn power off until next poll
 }
 
@@ -183,7 +201,7 @@ byte readByte() {
     result = result << 1;                           // Shift right for each incoming bit
 
     // Wait for low pulse, timeout if no pulse (I.E. no tank present)
-    unsigned long pulseTime = (pulseIn(SeeLevelReadPIN, LOW, SEELEVEL_PULSE_TIMEOUT));
+    unsigned long pulseTime = (pulseIn(SeeLevelReadPIN, LOW, SEELEVEL_PULSE_TIMEOUT_MICROSECONDS));
 
     // Decide if pulse is logical '0', '1' or invalid
     if ((pulseTime >= 5) && (pulseTime <= 20)) {
