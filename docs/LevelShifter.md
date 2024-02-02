@@ -8,4 +8,6 @@ Based on available components, and to make sure that the read pin sees no more t
 
 This circuit works fairly well at voltages > 12.5 with a 200ohm resistor, >12.0v with a 100ohm. Generates read errors at lower voltages.
 
+Tested with 100ohm resistor, three sensors, one of which was wired with 20ft. of 20ga. wire.
+
 ![My Image](SeeLevelSensorCircuit.png)

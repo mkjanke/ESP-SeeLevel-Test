@@ -59,27 +59,29 @@ Notes:
   No attempt is made to process the returned data into an actual liquid level. I'm intending
   that to be done in some other app (perhaps Node-Red).
 
-  I'm not confident in the validity of the checksum calculation.
-
   Uses Arduino framework but is only tested on an ESP32.
 
 */
 
 #include <Arduino.h>
 
-// ESP32 Write Pin. Set HIGH to power sensors
-const int SeeLevelWritePIN = 13;
+// ESP32 Write Pin. Set HIGH to power sensors, pulsed to initiate sensor read
+const int SeeLevelWritePIN = 19;
 // ESP32 Read pin. Will be pulled low by sensors
-const int SeeLevelReadPIN = 16;
+const int SeeLevelReadPIN = 21;
+
+// Which Serial to use for debug output
+// #define _SerialOut USBSerial
+#define _SerialOut Serial
 
 // Time 12V bus is powered before sending pulse(s) to sensor(s)
 #define SEELEVEL_POWERON_DELAY_MICROSECONDS 2450
 // Width of pulse sent to sensors
 #define SEELEVEL_PULSE_LOW_MICROSECONDS 85
-// Time between pulses snt to sensors
+// Time between pulses sent to sensors
 #define SEELEVEL_PULSE_HIGH_MICROSECONDS 290
 // How long to wait for response before timing out
-#define SEELEVEL_PULSE_TIMEOUT_MICROSECONDS 5000
+#define SEELEVEL_PULSE_TIMEOUT_MICROSECONDS 3000
 
 // Byte array to store data for 3 tanks x 12 bytes data per tank:
 byte SeeLevelData[3][12];
@@ -88,8 +90,8 @@ byte readByte();
 void readLevel(int);
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println("\n\nTank Level is Woke!");
+  _SerialOut.begin(115200);
+  _SerialOut.println("\n\nTank Level is Woke!");
   pinMode(SeeLevelWritePIN, OUTPUT);
   pinMode(SeeLevelReadPIN, INPUT);
   digitalWrite(SeeLevelWritePIN, LOW);
@@ -98,12 +100,12 @@ void setup() {
 
 void loop() {
   for (auto t = 0; t < 3; t++) {
-    Serial.print("Tank " + (String)t + ": ");
+    _SerialOut.print("Tank " + (String)t + ": ");
     readLevel(t);
 
     for (auto i = 0; i < 12; i++) {
-      Serial.print(SeeLevelData[t][i]);
-      Serial.print(' ');
+      _SerialOut.print(SeeLevelData[t][i]);
+      _SerialOut.print(' ');
     }
 
     // Verify checksum
@@ -116,17 +118,17 @@ void loop() {
       int checkSum = SeeLevelData[t][1];
       // Checksum appears to be (sum of bytes % 256) - 1, with special case for checksum 255.
       if (((byteSum % 256) - 1 == checkSum) || (byteSum % 256 == 0 && checkSum == 255)) {
-        Serial.print("Checksum: ");
-        Serial.print((byteSum % 256) - 1);
-        Serial.println(" OK");
+        _SerialOut.print("Checksum: ");
+        _SerialOut.print((byteSum % 256) - 1);
+        _SerialOut.println(" OK");
       } else {
-        Serial.print(" byteSum % 256 - 1 = ");
-        Serial.print(" Checksum: ");
-        Serial.print((byteSum % 256) - 1);
-        Serial.println(" Not OK");
+        _SerialOut.print(" byteSum % 256 - 1 = ");
+        _SerialOut.print(" Checksum: ");
+        _SerialOut.print((byteSum % 256) - 1);
+        _SerialOut.println(" Not OK");
       }
     } else {
-      Serial.println(" byteSum == 0, No data ");
+      _SerialOut.println(" byteSum == 0, No data ");
     }
     // Bus must be pulled low for some time before attempting to read another sensor
     delay(1000);
