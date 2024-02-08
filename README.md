@@ -39,14 +39,12 @@ A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
 ### Notes:
 
- * This app doesn't yet attempt to accommodate a trimmed sender or any sender other than the 710AR Rev E.
+ * This app doesn't do anything special with a trimmed sender. Sensor pads that are trimmed off will return value of '255'.
 
  * No attempt is made to process the returned data into an actual liquid level. I'm intending that to be done in some other app (perhaps Node-Red).
-
- * I'm not confident in the validity of the checksum calculation.
 
  * Uses Arduino framework but is only tested on an ESP32.
 
 ### TBD
 
-This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit; that the checksum math is correct; that the circuit and app work with multiple sensors & trimmed sensors; that the timing is not affected by wire length and type; and much, much more.
+This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit;  and that it works with trimmed sensors.
