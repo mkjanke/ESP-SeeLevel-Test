@@ -66,13 +66,13 @@ Notes:
 #include <Arduino.h>
 
 // ESP32 Write Pin. Set HIGH to power sensors, pulsed to initiate sensor read
-const int SeeLevelWritePIN = 19;
+const int SeeLevelWritePIN = 7;
 // ESP32 Read pin. Will be pulled low by sensors
-const int SeeLevelReadPIN = 21;
+const int SeeLevelReadPIN = 9;
 
 // Which Serial to use for debug output
-// #define _SerialOut USBSerial
-#define _SerialOut Serial
+#define _SerialOut USBSerial
+// #define _SerialOut Serial
 
 // Time 12V bus is powered before sending pulse(s) to sensor(s)
 #define SEELEVEL_POWERON_DELAY_MICROSECONDS 2450
