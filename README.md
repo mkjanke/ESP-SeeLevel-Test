@@ -45,6 +45,8 @@ A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
  * Uses Arduino framework but is only tested on an ESP32.
 
+* A Python SeeLevel tank gauge readier is [here](https://github.com/robwolff3/seelevel2mqtt/) 
+
 ### TBD
 
 This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit;  and that it works with trimmed sensors.
