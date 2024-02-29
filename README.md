@@ -12,7 +12,7 @@ To trigger the tank sender/sensor, one needs to power the sender with 12V then p
 
 Each Garnet SeeLevel tank sender is configured as sensor 1, 2, or 3 by snipping a tab on the sender. A sender will respond when it sees a sequence of pulses to ground equal to its sensor number. Each pulse needs to be approx 85µs wide. Pulse spacing needs to be approximately 300µs.
 
-The sender will respond by pulling the 12V line to ground in a series of pulses. Pulses will either be approximately 13µs wide or 48µs wide. In this application I'm treating the short pulses as '0', long pulses as '1'. (JIm G. did the opposite)
+The sender will respond by pulling the 12V line to ground in a series of pulses. Pulses will either be approximately 15µs wide or 50µs wide. In this application I'm treating the short pulses as '0', long pulses as '1'. (Jim G. did the opposite)
 
 Bytes returned from sender:
 
@@ -45,8 +45,11 @@ A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
  * Uses Arduino framework but is only tested on an ESP32.
 
-* A Python SeeLevel tank gauge readier is [here](https://github.com/robwolff3/seelevel2mqtt/) 
+ * A Python SeeLevel tank gauge reader is [here](https://github.com/robwolff3/seelevel2mqtt/) 
+ 
+ * A version that uses the ESP32 RMT preiphrial and broadcasts its data via ESP-NOW is here: https://github.com/mkjanke/ESP32-SeeLevel-NOW
+
 
 ### TBD
 
-This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit;  and that it works with trimmed sensors.
+This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit, and that it works with trimmed sensors.
