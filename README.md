@@ -48,8 +48,10 @@ A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
  * A Python SeeLevel tank gauge reader is [here](https://github.com/robwolff3/seelevel2mqtt/) 
  
  * A version that uses the ESP32 RMT preiphrial and broadcasts its data via ESP-NOW is here: https://github.com/mkjanke/ESP32-SeeLevel-NOW
+ 
+ * An ESPHome version, with KiCAD drawings and PCB files: https://github.com/j9brown/esphome-seelevel
 
 
 ### TBD
 
-This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit, and that it works with trimmed sensors.
+This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit.
