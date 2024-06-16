@@ -54,4 +54,5 @@ A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
 ### TBD
 
-This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit.
+* This is not a complete solution. To make this usable, one would have to make sure the interface circuit adequately protects both the ESP32 and sending unit. The version created by j9brown linked above adds a transistor that protects the ESP32 input pin.
+* Based on information in j9bron's repository, the checksum returned from the sending units is a 12-bit sum, not an 8-bit sum as implemented in this repository. This repository will need to be updated to reflect that. 
