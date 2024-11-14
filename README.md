@@ -29,6 +29,64 @@ Demo app - Output to Serial port upon successful read:
 
     Tank 0: 147 121 0 0 0 0 14 108 149 179 184 255 Checksum: 121 OK
 
+### Interpreting sensor data:
+
+The sensor data returned from the sender is not usable without interpretation. Depending on tank configuration, tank contaminations & sensor placement:
+
+ * Readings from segments may show values greater than zero for an empty segment. My tanks show segment readings anywhere from 0 to 20 when empty.
+
+ * A full segment may show a value less than 255. My tanks, for example, read a full segment anywhere from 126 to 180, depending on the tank construction and sensor placement. One tank might read full segments at 126, another might read full at 160 or 180.
+
+#### Pseudo code for interpreting sensor data:
+
+For each sensor, set a minimum threshold value that represents a valid reading.
+
+For each sensor, set an upper threshold value that represents a full tank. 
+
+```
+min = 15
+full = 160.
+```
+Process the segment readings from left to right -- I.E. from top of tank to bottom of tank.
+
+For each segment, set any segment whose value is less than the per-tank minimum threshold to zero. This eliminates 'noise' from segments when tanks walls are not perfectly dry or segments are affected by placement of nearby tank fittings, etc.
+
+```
+if (segment[i] < min) {
+    segment[i] = 0
+}
+```
+For each segment, set any segment whose value is greater than the per-tank full threshold to the full value.
+
+```
+if (segment[i] > full) {
+    segment[i] = full
+}
+```
+For each segment, if the next segment is less than the current segment, the current segment's reading is invalid. Set the current segment to zero. This assures that only segments that increase in value from the prior segment are represented in the final calculation.
+
+```
+if (segment[i+1] < segment[i]) {
+    segment[i] = 0
+}
+```
+For each segment, if the next segment is less than the full threshold, the current segment's reading is invalid. Set the current segment to zero. This assures that only one partially filled segment is represented in the final calculation.
+
+```
+if (segment[i+1] < full) {
+    segment[i] = 0
+}
+```
+Add together the rationalized values for each segment and divide by the total number of segments. This is the final value for the tank.
+
+```
+final_value = sum(segment) / total_segments
+```
+#### AlgorithmNotes:
+ * This algorithm is based on the assumption that the sensor data is linearly related to the tank level.
+
+ * This algorithm is still an approximation. I've found that it can be off by 5-10% when the tank is partially full, but is more accurate when near-empty or near-full. 
+
 ### Interfacing 12V sensor with 3.3V ESP32:
 
 A description of the circuit necessary to interface the 3.3V ESP32 with the 12V SeeLevel sensor is [here](./docs/LevelShifter.md). 
@@ -37,7 +95,7 @@ The interface, designed by Jim G. of the Raspberry Pi forum, uses a high-side P-
 
 A cheap 12V-tolerant logic analyzer (LA1010) was used to assist in debugging.
 
-### Notes:
+### Project Notes:
 
  * This app doesn't do anything special with a trimmed sender. Sensor pads that are trimmed off will return value of '255'.
 
