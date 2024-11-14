@@ -82,7 +82,7 @@ Add together the rationalized values for each segment and divide by the total nu
 ```
 final_value = sum(segment) / total_segments
 ```
-#### AlgorithmNotes:
+#### Algorithm Notes:
  * This algorithm is based on the assumption that the sensor data is linearly related to the tank level.
 
  * This algorithm is still an approximation. I've found that it can be off by 5-10% when the tank is partially full, but is more accurate when near-empty or near-full. 
